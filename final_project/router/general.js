@@ -44,14 +44,34 @@ if (matchingBooks.length > 0) {
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
-});
+    const title = req.params.title;
+    const bookArray = Object.values(books);
+  
+    const matchingBooks = bookArray.filter(book => 
+      book.title.trim().toLowerCase() === title.trim().toLowerCase()
+  );
+  
+  if (matchingBooks.length > 0) {
+      return res.status(200).json({ 
+          message: `Books found by title: ${title}`,
+          books: matchingBooks 
+      });
+  } else {
+      return res.status(404).json({ 
+          message: `No books found by author: ${title}` 
+      });
+  }
+  });
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
-});
+    const isbn = req.params.isbn;;
+  
+    if (!books[isbn].reviews) {
+        return res.send(books[isbn].reviews)
+    } else {
+        return res.status(404).json({message: "No reviews at this time."})
+    }
+  });
 
 module.exports.general = public_users;
