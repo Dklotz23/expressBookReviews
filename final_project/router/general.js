@@ -24,11 +24,22 @@ public_users.get('/isbn/:isbn',function (req, res) {
 // Get book details based on author
 public_users.get('/author/:author',function (req, res) {
   const author = req.params.author;
-  const keys = Object.keys(books);
-  for (i=0; keys.length; i++) {
-    if (keys[i][0].value == author)
-        return res.send(keys[i][0].value)
-  }
+  const bookArray = Object.values(books);
+
+  const matchingBooks = bookArray.filter(book => 
+    book.author.trim().toLowerCase() === author.trim().toLowerCase()
+);
+
+if (matchingBooks.length > 0) {
+    return res.status(200).json({ 
+        message: `Books found by author: ${author}`,
+        books: matchingBooks 
+    });
+} else {
+    return res.status(404).json({ 
+        message: `No books found by author: ${author}` 
+    });
+}
 });
 
 // Get all books based on title
