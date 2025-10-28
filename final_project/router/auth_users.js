@@ -18,7 +18,6 @@ const isValid = (username)=>{ //returns boolean
 }
 
 const authenticatedUser = (username,password)=>{ //returns boolean
-    // Filter the users array for any user with the same username and password
     let validusers = users.filter((user) => {
         return (user.username === username && user.password === password);
     });
@@ -32,13 +31,32 @@ const authenticatedUser = (username,password)=>{ //returns boolean
 
 //only registered users can login
 regd_users.post("/login", (req,res) => {
-  //Write your code here
-  return res.status(300).json({message: "Yet to be implemented"});
+    const username = req.body.username;
+    const password = req.body.password;
+
+    if (!username || !password) {
+        return res.status(404).json({message: "Missing Username or Password"})
+    }
+
+    if (authenticatedUser(username, password)) {
+        let accessToken = jwt.sign({
+            data: password
+        }, 'access', { expiresIn: 60 * 60});
+
+        req.session.authorization = {
+            accessToken, username
+        }
+        return res.status(200).json( {message: "Successfully Logged In"});
+    } else {
+        return res.status(404).json({message: "Authorization Failled"})
+    }
 });
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-  //Write your code here
+    const isbn = req.params.isbn
+    const review = req.params.review
+
   return res.status(300).json({message: "Yet to be implemented"});
 });
 
