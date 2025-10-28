@@ -41,23 +41,33 @@ regd_users.post("/login", (req,res) => {
     if (authenticatedUser(username, password)) {
         let accessToken = jwt.sign({
             data: password
-        }, 'access', { expiresIn: 60 * 60});
+        }, 'access', { expiresIn: 6000 * 6000});
 
         req.session.authorization = {
             accessToken, username
         }
         return res.status(200).json( {message: "Successfully Logged In"});
     } else {
-        return res.status(404).json({message: "Authorization Failled"})
+        return res.status(404).json({message: "Authorization Failed"})
     }
 });
 
 // Add a book review
 regd_users.put("/auth/review/:isbn", (req, res) => {
-    const isbn = req.params.isbn
-    const review = req.params.review
+    const user = req.session.user;
+    const isbn = req.params.isbn;
+    const newReview = req.query.review;
+    const review = {username: user, reviews: newReview};
+    books[isbn].reviews = review;
 
-  return res.status(300).json({message: "Yet to be implemented"});
+    return res.status(202).send(`Review Added: ${books[isbn].reviews}`)
+    
+  });
+
+  regd_users.delete("/auth/review/:isbn", (req, res) => {
+    let isbn = req.params.isbn;
+    books[isbn].reviews = {}
+    return res.status(200).json({messsage:"Review deleted"})
 });
 
 module.exports.authenticated = regd_users;
