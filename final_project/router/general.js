@@ -20,35 +20,90 @@ public_users.post("/register", (req,res) => {
 });
 
 // Get the book list available in the shop
+//public_users.get('/',function (req, res) {
+//  return res.send(JSON.stringify(books, null, 4));
+//});
+
 public_users.get('/',function (req, res) {
-  return res.send(JSON.stringify(books, null, 4));
+    const getBooks = () => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve(books);
+        }, 800);
+    })
+};
+    getBooks().then((books) => {
+        res.json(books)
+    }).catch((err) => {
+        res.status(400).json({message: "could not get books"})
+    })
 });
 
 // Get book details based on ISBN
-public_users.get('/isbn/:isbn',function (req, res) {
-    const isbn = req.params.isbn
-    return res.send(books[isbn])
- });
-  
-// Get book details based on author
-public_users.get('/author/:author',function (req, res) {
-  const author = req.params.author;
-  const bookArray = Object.values(books);
+//public_users.get('/isbn/:isbn',function (req, res) {
+//    const isbn = req.params.isbn
+//    return res.send(books[isbn])
+// });
 
-  const matchingBooks = bookArray.filter(book => 
-    book.author.trim().toLowerCase() === author.trim().toLowerCase()
-);
-if (matchingBooks.length > 0) {
-    return res.status(200).json({ 
-        message: `Books found by author: ${author}`,
-        books: matchingBooks 
-    });
-} else {
-    return res.status(404).json({ 
-        message: `No books found by author: ${author}` 
-    });
+ public_users.get('/isbn/:isbn',function (req, res) {
+    const isbn = req.params.isbn
+    const bookById = books[isbn]
+    getOnIsbn = () => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve(bookById)
+            }, 800);
+        })
+    }
+    getOnIsbn().then((bookById) => {
+        res.json(bookById)
+    }).catch((err) => {
+        res.status(400).json({message: "could not get book at id"})
+    })
+ }); 
+
+// Get book details based on author
+//public_users.get('/author/:author',function (req, res) {
+//  const author = req.params.author;
+//  const bookArray = Object.values(books);
+//
+//  const matchingBooks = bookArray.filter(book => 
+//    book.author.trim().toLowerCase() === author.trim().toLowerCase()
+//);
+//if (matchingBooks.length > 0) {
+//    return res.status(200).json({ 
+//        message: `Books found by author: ${author}`,
+//        books: matchingBooks 
+//    });
+//} else {
+//    return res.status(404).json({ 
+//        message: `No books found by author: ${author}` 
+//    });
+//}
+//});
+
+public_users.get('/author/:author',function (req, res) {
+    const author = req.params.author;
+    const bookArray = Object.values(books);
+  
+    const matchingBooks = bookArray.filter(book => 
+      book.author.trim().toLowerCase() === author.trim().toLowerCase()
+    );  
+    getOnAuthor = () => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve(matchingBooks)
+            }, 800);
+    })  
 }
-});
+  if (matchingBooks.length > 0) {
+        getOnAuthor().then((matchingBooks) => {
+            res.json(matchingBooks)
+        }).catch((err) => {
+            res.status(400).json({message: "could not get book at Author"})
+        })
+     }
+  });
 
 // Get all books based on title
 public_users.get('/title/:title',function (req, res) {
