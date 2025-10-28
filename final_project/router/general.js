@@ -106,25 +106,46 @@ public_users.get('/author/:author',function (req, res) {
   });
 
 // Get all books based on title
+//public_users.get('/title/:title',function (req, res) {
+//    const title = req.params.title;
+//    const bookArray = Object.values(books); 
+//    const matchingBooks = bookArray.filter(book => 
+//      book.title.trim().toLowerCase() === title.trim().toLowerCase()
+//  );  
+//  if (matchingBooks.length > 0) {
+//      return res.status(200).json({ 
+//          message: `Books found by title: ${title}`,
+//          books: matchingBooks 
+//      });
+//  } else {
+//      return res.status(404).json({ 
+//          message: `No books found by author: ${title}` 
+//      });
+//     }
+//  });
+
 public_users.get('/title/:title',function (req, res) {
     const title = req.params.title;
-    const bookArray = Object.values(books);
-  
+    const bookArray = Object.values(books); 
     const matchingBooks = bookArray.filter(book => 
       book.title.trim().toLowerCase() === title.trim().toLowerCase()
-  );
-  
-  if (matchingBooks.length > 0) {
-      return res.status(200).json({ 
-          message: `Books found by title: ${title}`,
-          books: matchingBooks 
-      });
-  } else {
-      return res.status(404).json({ 
-          message: `No books found by author: ${title}` 
-      });
+ );
+    getOnTitle = () => {
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve(matchingBooks)
+            }, 800);
+        })  
+    }
+if (matchingBooks.length > 0) {
+    getOnTitle().then((matchingBooks) => {
+        res.json(matchingBooks)
+    }).catch((err) => {
+        res.status(400).json({message: "could not get book at Author"})
+    })
   }
-  });
+});
+
 
 //  Get book review
 public_users.get('/review/:isbn',function (req, res) {
